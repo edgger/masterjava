@@ -3,15 +3,11 @@ package ru.javaops.masterjava.xml.schema;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -25,22 +21,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="fullName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="groups">
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="Groups">
  *           &lt;complexType>
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence maxOccurs="unbounded">
- *                   &lt;element name="group" type="{http://www.w3.org/2001/XMLSchema}IDREF"/>
+ *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;element ref="{http://javaops.ru}Group"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
  *       &lt;/sequence>
- *       &lt;attribute name="email" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="flag" use="required" type="{http://javaops.ru}flagType" />
- *       &lt;attribute name="city" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -50,47 +44,41 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "fullName",
+    "description",
     "groups"
 })
-@XmlRootElement(name = "User", namespace = "http://javaops.ru")
-public class User {
+@XmlRootElement(name = "Project", namespace = "http://javaops.ru")
+public class Project {
 
     @XmlElement(namespace = "http://javaops.ru", required = true)
-    protected String fullName;
-    @XmlElement(namespace = "http://javaops.ru", required = true)
-    protected User.Groups groups;
-    @XmlAttribute(name = "email", required = true)
-    protected String email;
-    @XmlAttribute(name = "flag", required = true)
-    protected FlagType flag;
-    @XmlAttribute(name = "city", required = true)
-    @XmlIDREF
-    @XmlSchemaType(name = "IDREF")
-    protected Object city;
+    protected String description;
+    @XmlElement(name = "Groups", namespace = "http://javaops.ru", required = true)
+    protected Project.Groups groups;
+    @XmlAttribute(name = "name", required = true)
+    protected String name;
 
     /**
-     * Gets the value of the fullName property.
+     * Gets the value of the description property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getFullName() {
-        return fullName;
+    public String getDescription() {
+        return description;
     }
 
     /**
-     * Sets the value of the fullName property.
+     * Sets the value of the description property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setFullName(String value) {
-        this.fullName = value;
+    public void setDescription(String value) {
+        this.description = value;
     }
 
     /**
@@ -98,10 +86,10 @@ public class User {
      * 
      * @return
      *     possible object is
-     *     {@link User.Groups }
+     *     {@link Project.Groups }
      *     
      */
-    public User.Groups getGroups() {
+    public Project.Groups getGroups() {
         return groups;
     }
 
@@ -110,83 +98,35 @@ public class User {
      * 
      * @param value
      *     allowed object is
-     *     {@link User.Groups }
+     *     {@link Project.Groups }
      *     
      */
-    public void setGroups(User.Groups value) {
+    public void setGroups(Project.Groups value) {
         this.groups = value;
     }
 
     /**
-     * Gets the value of the email property.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getEmail() {
-        return email;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the value of the email property.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setEmail(String value) {
-        this.email = value;
-    }
-
-    /**
-     * Gets the value of the flag property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FlagType }
-     *     
-     */
-    public FlagType getFlag() {
-        return flag;
-    }
-
-    /**
-     * Sets the value of the flag property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FlagType }
-     *     
-     */
-    public void setFlag(FlagType value) {
-        this.flag = value;
-    }
-
-    /**
-     * Gets the value of the city property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
-     */
-    public Object getCity() {
-        return city;
-    }
-
-    /**
-     * Sets the value of the city property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setCity(Object value) {
-        this.city = value;
+    public void setName(String value) {
+        this.name = value;
     }
 
 
@@ -199,8 +139,8 @@ public class User {
      * &lt;complexType>
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence maxOccurs="unbounded">
-     *         &lt;element name="group" type="{http://www.w3.org/2001/XMLSchema}IDREF"/>
+     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *         &lt;element ref="{http://javaops.ru}Group"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -215,8 +155,8 @@ public class User {
     })
     public static class Groups {
 
-        @XmlElementRef(name = "group", namespace = "http://javaops.ru", type = JAXBElement.class)
-        protected List<JAXBElement<Object>> group;
+        @XmlElement(name = "Group", namespace = "http://javaops.ru")
+        protected List<Group> group;
 
         /**
          * Gets the value of the group property.
@@ -236,13 +176,13 @@ public class User {
          * 
          * <p>
          * Objects of the following type(s) are allowed in the list
-         * {@link JAXBElement }{@code <}{@link Object }{@code >}
+         * {@link Group }
          * 
          * 
          */
-        public List<JAXBElement<Object>> getGroup() {
+        public List<Group> getGroup() {
             if (group == null) {
-                group = new ArrayList<JAXBElement<Object>>();
+                group = new ArrayList<Group>();
             }
             return this.group;
         }

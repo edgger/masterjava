@@ -3,6 +3,7 @@ package ru.javaops.masterjava.xml.schema;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
@@ -25,12 +26,29 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private final static QName _City_QNAME = new QName("http://javaops.ru", "City");
+    private final static QName _UserGroupsGroup_QNAME = new QName("http://javaops.ru", "group");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: ru.javaops.masterjava.xml.schema
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link Project }
+     * 
+     */
+    public Project createProject() {
+        return new Project();
+    }
+
+    /**
+     * Create an instance of {@link User }
+     * 
+     */
+    public User createUser() {
+        return new User();
     }
 
     /**
@@ -42,11 +60,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link User }
+     * Create an instance of {@link Project.Groups }
      * 
      */
-    public User createUser() {
-        return new User();
+    public Project.Groups createProjectGroups() {
+        return new Project.Groups();
+    }
+
+    /**
+     * Create an instance of {@link Group }
+     * 
+     */
+    public Group createGroup() {
+        return new Group();
+    }
+
+    /**
+     * Create an instance of {@link User.Groups }
+     * 
+     */
+    public User.Groups createUserGroups() {
+        return new User.Groups();
     }
 
     /**
@@ -66,6 +100,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Payload.Projects }
+     * 
+     */
+    public Payload.Projects createPayloadProjects() {
+        return new Payload.Projects();
+    }
+
+    /**
      * Create an instance of {@link CityType }
      * 
      */
@@ -80,6 +122,16 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://javaops.ru", name = "City")
     public JAXBElement<CityType> createCity(CityType value) {
         return new JAXBElement<CityType>(_City_QNAME, CityType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://javaops.ru", name = "group", scope = User.Groups.class)
+    @XmlIDREF
+    public JAXBElement<Object> createUserGroupsGroup(Object value) {
+        return new JAXBElement<Object>(_UserGroupsGroup_QNAME, Object.class, User.Groups.class, value);
     }
 
 }
