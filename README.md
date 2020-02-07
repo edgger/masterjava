@@ -1,81 +1,113 @@
-####  Написание с нуля полнофункционального многомодульного Maven проекта: 
-веб приложения (Tomcat, JSP, jQuery), 
-многопоточного почтового сервиса (JavaMail, java.util.concurrent.*) и вспомогательных модулей связанных по Веб и REST сервисам (SOAP, JAX-WS, Axis, JAX-RS)
-c сохранением данных в RMDBS и динамическим конфигурирование модулей по JMX.
+# Многомодульный maven. Многопоточность. XML. Веб сервисы. Удаленное взаимодействие
 
-## Сервис-ориентированная архитектура, Микросервисы
-- JMS, альтернативы
-- Варианты разворачивания сервисов. Работа с базой. Связывание сервисов.
+![image](https://cloud.githubusercontent.com/assets/13649199/23876457/ab01ff0a-084e-11e7-964f-49c90579fac9.png)
 
-## Maven. Многомодульный Maven проект
-- Build Lifecycle
-- Dependency Mechanism
-- Зависимости, профили, написание плагина
-- The Reactor. Snapshots
+- **приложение импорта** из XML (JAXB, StAX, XPath, XSLT)
+- **многопоточного почтового веб-сервиса** (JavaMail, java.util.concurrent, JAX-WS, MTOM, хендлеры авторизации, логирования и статистики) 
+- **веб приложения отправки почты с вложениями**
+  - по SOAP (JAX-WS, MTOM)
+  - по JAX-RS (Jersey)
+  - по JMS ([ActiveMQ](http://activemq.apache.org/))
+  - через [AKKA](http://akka.io/)
+  - используя асинхронные сервлеты 3.0
+- сохранение данных в PostgreSQL используя [jDBI](http://jdbi.org/)
+- миграция базы [LiquiBase](http://www.liquibase.org/)
+- использование в проекте [Guava](https://github.com/google/guava/wiki), [Thymleaf](http://www.thymeleaf.org/), [Lombok](https://projectlombok.org/), [StreamEx](https://github.com/amaembo/streamex), 
+[Typesafe Config](https://github.com/typesafehub/config), [Java Microbenchmark JMH](http://openjdk.java.net/projects/code-tools/jmh)
 
-## Создание/тестирование веб-приложения. 
-- Сборка, запуск, локальный и удаленный debug проекта, способы деплоя в Tomcat
-- tomcat7-maven-plugin
+## [Занятие 1: Многопоточность](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson01.md) 
+- Вступление. Многопоточность и параллельность
+- Структура памяти Java. Ленивая инициализация
+- Реализация многопоточности в Java
+- Реализация многопоточной отправки писем. Execution Framework
 
-### Веб-сервисы
-- Веб-сервисы. SOAP. Преимущества/недостатки веб-сервисов. Расширения.
-- Реализация веб-сервисов в Java. JAX-RPC, JAX-WS, CFX, Axis. Стили WSDL
-- Создание API и реализации веб-сервиса MailService.
-- Деплой и тестирование через SoapUI.
+## [Занятие 2](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson02.md)
+- Разбор ДЗ (многопоточная реализация умножения матриц)
+- [Java Microbenchmark JMH](http://openjdk.java.net/projects/code-tools/jmh/) (от Алексея Шипилева)
+- Формат XML. Создание схемы XSD.
+- Работа с XML в Java
+  - JAXB, JAXP
+  - StAX
+  - XPath
+  - XSLT
 
-## Доработка веб-сервиса. Кастомизация WSDL.
-- Работа с JAXB.
-- Передача по SOAP Exception
-- Включение wsdl в сервис для публикации.
-- Генерация java кода по WSDL
+## [Занятие 3](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson03.md)
+- Разбор ДЗ (работа с XML)
+- [Обзор Guava](https://drive.google.com/open?id=0B9Ye2auQ_NsFeFB5a29JQ2tRNHM)
+- Монады. flatMap
+- SOA и Микросервисы
+- Многомодульный Maven проект
 
-## Реализация клиент веб-сервиса.
-- Публикация веб сервиса из main(). Дабавление wsdl
-- Выделение из wsdl общей части
-- Создание клиента почтового сервиса.
-- Тестирование с помощью JUnit 4
-- Интеграционное тестирование, maven-failsafe-plugin
+## [Занятие 4](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson04.md)
+- Разбор ДЗ (реализация структуры проекта, загрузка и разбор xml)
+- Thymleaf
+- Maven. Поиск и разрешение конфликтов зависимостей
+- Подключаем логирование с общими настройкам
+- Библиотеки и фреймворки для работы с JDBC.
+- Модуль persistence
 
-## JAX-WS Handlers
-- Logical/protocol handlers.
-- Логирование SOAP на стороне клиента.
-- Логирование и статистика трафика опубликованного веб-сервиса.
-- wsimport binding.
-- SoapHandler аутентификация.
-Добавляем файлы вложения. Mail-Service.
+## [Занятие 5](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson05.md)
+- Разбор ДЗ 
+  - Сохранение в базу в batch-моде с обработкой конфликтов
+  - Вставка в несколько потоков
+- Конфигурирование приложения (<a href="https://github.com/typesafehub/config">Typesafe config</a>)
+- Lombok
 
-## Создаем вложения почты
-- Генерация обновленного WSDL через wsgen
-- Веб-сервисы: JAX-WS attachment with MTOM
-- Тестирование вложений через SoapUi.
+## [Занятие 6](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson06.md)
+- Разбор ДЗ (доработка модели и модуля export)
+- Миграция DB
+- Веб-сервисы (REST/SOAP)
+  - Java реализации SOAP
+  - Имплементируем Mail Service
+  
+## [Занятие 7](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson07.md)
+- Разбор ДЗ 
+  - реализация MailSender
+  - сохранение результатов отправки в DB
+  - импорт Проектов и Групп 
+- Стили WSDL. Кастомизация WSDL
+- Публикация кастомизированного WSDL. Автогенерация.
+- Деплой в Tomcat
+- Создание клиента почтового сервиса
+- Реализация массовой и групповой отправки почты. HW7
 
-## Загрузка файлов.
-- Стандарт MIME. Обрабатываем вложения на форме: commons-fileupload
-- Загрузка файла вместе в полями формы.
-- Вызов клиента с вложениями.
+## [Занятие 8](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson08.md)
+- Разбор ДЗ
+   - Делаем общий mailService.wsdl
+   - Обновление WSDL
+   - Отправка почты из модуля webapp
+- Доступ к переменным maven в приложении
+- SOAP Exception. Выделение общей части схемы
+- Коррекция схемы
 
-## Персистентность.
-- NoSQL or RDBMS. Обзор NoSQL систем. CAP
-- Обзор Java persistence solution: commons-dbutils, Spring JdbcTemplate, MyBatis, JOOQ, ORM (Hibernate, TopLink, ElipseLink, EBean used in Playframework). JPA. JPA Performance Benchmark
-- Работа с базой: создание базы, настройка IDEA Database.
-- Работа с DB через DataSource, настройка tomcat. HikariCP
-- Настройка работы с DataSource из JUnit.
+## [Занятие 9](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson09.md)
+- Добавление мавен плагинов (copy-rename-maven-plugin, maven-antrun-plugin, liquibase-maven-plugin)
+- Разбор ДЗ
+  - Реализация вложений в веб-сервисе
+  - Подключение MTOM
+  - Реализация загрузки вложений в модуле webapp
+  - Реализация вложений в почте
+- JAX-WS Message Context. Авторизация
+- JAX-WS Handlers (логирование SOAP)
+- Домашнее задание. Статистика
 
-## REST веб сервис.
+## [Занятие 10](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson10.md)
+- Разбор ДЗ
+  - Реализация SOAP handlers
+  - Конфигурирование сервисов
+- JavaEE
 - JAX-RS. Интеграция с Jersey
-- Поддержка Json. Jackson
-
-## Асинхронность.
-- @OneWay vs Java Execution framework
-- Добавление в клиенте асинхронных вызовов.
-- Асинхронные сервлеты 3.x в Tomcat
-
-## Динамическое конфигурирование. JMX
-- Maven Groovy cкрптинг.  groovy-maven-plugin
-- Настройка Tomcat на удаленное администрирование по JMX
-
-## Отправка email в многопоточном приложении
-- Initialization on demand holder / Double-checked locking
-- java.util.concurrent.*: Executors , Synchronizers, Concurrent Collections, Lock
-
-## Проблема MemoryLeak. Поиск утечки памяти.
+- JMS. Интеграция с [ActiveMQ](http://activemq.apache.org/)
+ 
+## [Занятие 11](https://github.com/JavaWebinar/masterjava/blob/doc/doc/lesson11.md)
+- Авторизация в контейнере Tomcat
+- Отправка почты с вложениями
+  - по JAX-RS
+  - по JMS
+- Рефакторинг. Эксепшены в лямбдах Java 8
+- Concurrent and distributed applications toolkit AKKA
+- Отсылка почты через AKKA Actors (Typed и Untyped Actors)
+- Асинхронные сервлеты 3.0
+- Домашнее задание
+  - Разбор решения с асинхронными сервлетами
+- [Выбор языка программирования](https://drive.google.com/open?id=0B9Ye2auQ_NsFZUVNakNxeUtGeFE)
