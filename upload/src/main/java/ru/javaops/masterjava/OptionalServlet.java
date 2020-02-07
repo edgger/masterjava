@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
 public class OptionalServlet extends HttpServlet {
 
     private static final Comparator<User> USER_COMPARATOR = Comparator.comparing(User::getValue).thenComparing(User::getEmail);
+    private static final JaxbParser JAXB_PARSER = new JaxbParser(ObjectFactory.class);
+
+    static {
+        JAXB_PARSER.setSchema(Schemas.ofClasspath("payload.xsd"));
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -56,11 +61,9 @@ public class OptionalServlet extends HttpServlet {
     }
 
     private static Set<User> parseByJaxb(String projectName, InputStream is) throws Exception {
-        JaxbParser parser = new JaxbParser(ObjectFactory.class);
-        parser.setSchema(Schemas.ofClasspath("payload.xsd"));
         Payload payload;
 
-        payload = parser.unmarshal(is);
+        payload = JAXB_PARSER.unmarshal(is);
 
         Project project = StreamEx.of(payload.getProjects().getProject())
                 .filter(p -> p.getName().equals(projectName))

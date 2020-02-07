@@ -9,7 +9,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public class JaxbMarshaller {
-    private Marshaller marshaller;
+
+    private final Marshaller marshaller;
 
     public JaxbMarshaller(JAXBContext ctx) throws JAXBException {
         marshaller = ctx.createMarshaller();
@@ -22,7 +23,7 @@ public class JaxbMarshaller {
         marshaller.setProperty(prop, value);
     }
 
-    public synchronized void setSchema(Schema schema) {
+    public void setSchema(Schema schema) {
         marshaller.setSchema(schema);
     }
 
@@ -32,7 +33,7 @@ public class JaxbMarshaller {
         return sw.toString();
     }
 
-    public synchronized void marshal(Object instance, Writer writer) throws JAXBException {
+    public void marshal(Object instance, Writer writer) throws JAXBException {
         marshaller.marshal(instance, writer);
     }
 
