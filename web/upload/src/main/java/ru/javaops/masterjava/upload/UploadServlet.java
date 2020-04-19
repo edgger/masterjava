@@ -1,6 +1,8 @@
 package ru.javaops.masterjava.upload;
 
 import org.thymeleaf.context.WebContext;
+import ru.javaops.masterjava.persist.DBIProvider;
+import ru.javaops.masterjava.persist.dao.UserDao;
 import ru.javaops.masterjava.persist.model.User;
 
 import javax.servlet.ServletException;
@@ -20,6 +22,7 @@ import static ru.javaops.masterjava.common.web.ThymeleafListener.engine;
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 10) //10 MB in memory limit
 public class UploadServlet extends HttpServlet {
 
+    private static final int DEFAULT_BATCH_SIZE = 20;
     private final UserProcessor userProcessor = new UserProcessor();
 
     @Override
@@ -38,8 +41,14 @@ public class UploadServlet extends HttpServlet {
             if (filePart.getSize() == 0) {
                 throw new IllegalStateException("Upload file have not been selected");
             }
+            String sizeParam = req.getParameter("size");
+            int batchSize = sizeParam == null || sizeParam.isEmpty()
+                    ? DEFAULT_BATCH_SIZE
+                    : Integer.parseInt(sizeParam);
             try (InputStream is = filePart.getInputStream()) {
                 List<User> users = userProcessor.process(is);
+                UserDao userDao = DBIProvider.getDao(UserDao.class);
+                userDao.insert(users, batchSize);
                 webContext.setVariable("users", users);
                 engine.process("result", webContext, resp.getWriter());
             }

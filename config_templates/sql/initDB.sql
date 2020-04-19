@@ -13,3 +13,4 @@ CREATE TABLE users (
   flag      user_flag NOT NULL
 );
 
+CREATE UNIQUE INDEX emails on users(email);

@@ -2,6 +2,7 @@ package ru.javaops.masterjava.persist.dao;
 
 import com.bertoncelj.jdbi.entitymapper.EntityMapperFactory;
 import org.skife.jdbi.v2.sqlobject.*;
+import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapperFactory;
 import ru.javaops.masterjava.persist.model.User;
 
@@ -20,12 +21,22 @@ public abstract class UserDao implements AbstractDao {
         return user;
     }
 
+    public List<User> insert(List<User> users, int chunkSize) {
+        insertBatchGeneratedId(users, chunkSize);
+        return users;
+    }
+
     @SqlUpdate("INSERT INTO users (full_name, email, flag) VALUES (:fullName, :email, CAST(:flag AS user_flag)) ")
     @GetGeneratedKeys
     abstract int insertGeneratedId(@BindBean User user);
 
     @SqlUpdate("INSERT INTO users (id, full_name, email, flag) VALUES (:id, :fullName, :email, CAST(:flag AS user_flag)) ")
     abstract void insertWitId(@BindBean User user);
+
+    @SqlBatch("INSERT INTO users (full_name, email, flag) " +
+            "VALUES (:fullName, :email, CAST(:flag AS user_flag)) " +
+            "ON CONFLICT (email) DO NOTHING")
+    abstract void insertBatchGeneratedId(@BindBean Iterable<User> users, @BatchChunkSize int chunkSize);
 
     @SqlQuery("SELECT * FROM users ORDER BY full_name, email LIMIT :it")
     public abstract List<User> getWithLimit(@Bind int limit);
