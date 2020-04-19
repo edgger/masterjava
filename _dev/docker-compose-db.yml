@@ -1,0 +1,43 @@
+version: "2.4"
+services:
+
+  db:
+    restart: always
+    image: docker.io/postgres:10.9-alpine
+    container_name: db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: masterjava
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./initDB.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - mj-network
+
+  pgadmin:
+    restart: always
+    image: docker.io/dpage/pgadmin4:latest
+    container_name: pgadmin
+    ports:
+      - "9090:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "zed@mail.pro"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    volumes:
+      - ./pgadmin-servers.json:/pgadmin4/servers.json
+    networks:
+      - mj-network
+
+volumes:
+  pgdata:
+
+networks:
+  mj-network:
