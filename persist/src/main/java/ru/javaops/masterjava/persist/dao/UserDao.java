@@ -11,17 +11,7 @@ import ru.javaops.masterjava.persist.model.User;
 import java.util.List;
 
 @RegisterMapperFactory(EntityMapperFactory.class)
-public abstract class UserDao implements AbstractDao {
-
-    public User insert(User user) {
-        if (user.isNew()) {
-            int id = insertGeneratedId(user);
-            user.setId(id);
-        } else {
-            insertWitId(user);
-        }
-        return user;
-    }
+public abstract class UserDao extends AbstractDao<User> {
 
     @SqlQuery("SELECT nextval('user_seq')")
     abstract int getNextVal();
@@ -44,7 +34,7 @@ public abstract class UserDao implements AbstractDao {
     public abstract List<User> getWithLimit(@Bind int limit);
 
     //   http://stackoverflow.com/questions/13223820/postgresql-delete-all-content
-    @SqlUpdate("TRUNCATE users")
+    @SqlUpdate("TRUNCATE users CASCADE")
     @Override
     public abstract void clean();
 

@@ -2,19 +2,16 @@ package ru.javaops.masterjava.upload;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import ru.javaops.masterjava.persist.DBIProvider;
 import ru.javaops.masterjava.persist.dao.UserDao;
 import ru.javaops.masterjava.persist.model.User;
 import ru.javaops.masterjava.persist.model.UserFlag;
-import ru.javaops.masterjava.xml.schema.ObjectFactory;
-import ru.javaops.masterjava.xml.util.JaxbParser;
+import ru.javaops.masterjava.xml.util.JaxbUnmarshaller;
 import ru.javaops.masterjava.xml.util.StaxStreamProcessor;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,7 +25,6 @@ import java.util.concurrent.Future;
 public class UserProcessor {
     private static final int NUMBER_THREADS = 4;
 
-    private static final JaxbParser jaxbParser = new JaxbParser(ObjectFactory.class);
     private static UserDao userDao = DBIProvider.getDao(UserDao.class);
 
     private ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_THREADS);
@@ -47,19 +43,20 @@ public class UserProcessor {
     /*
      * return failed users chunks
      */
-    public List<FailedEmails> process(final InputStream is, int chunkSize) throws XMLStreamException, JAXBException {
+    public List<FailedEmails> process(StaxStreamProcessor processor,
+                                      JaxbUnmarshaller unmarshaller,
+                                      int chunkSize) throws XMLStreamException, JAXBException {
         log.info("Start processing with chunkSize=" + chunkSize);
 
         Map<String, Future<List<String>>> chunkFutures = new LinkedHashMap<>();  // ordered map (emailRange -> chunk future)
 
         int id = userDao.getSeqAndSkip(chunkSize);
         List<User> chunk = new ArrayList<>(chunkSize);
-        val processor = new StaxStreamProcessor(is);
-        val unmarshaller = jaxbParser.createUnmarshaller();
 
         while (processor.doUntil(XMLEvent.START_ELEMENT, "User")) {
             ru.javaops.masterjava.xml.schema.User xmlUser = unmarshaller.unmarshal(processor.getReader(), ru.javaops.masterjava.xml.schema.User.class);
-            final User user = new User(id++, xmlUser.getValue(), xmlUser.getEmail(), UserFlag.valueOf(xmlUser.getFlag().value()));
+            //FIXME xmlUser.getCity - always null...
+            final User user = new User(id++, xmlUser.getValue(), xmlUser.getEmail(), UserFlag.valueOf(xmlUser.getFlag().value()), null);
             chunk.add(user);
             if (chunk.size() == chunkSize) {
                 addChunkFutures(chunkFutures, chunk);
