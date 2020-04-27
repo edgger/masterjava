@@ -7,6 +7,7 @@ DROP TYPE IF EXISTS user_flag;
 DROP SEQUENCE IF EXISTS user_seq;
 DROP TABLE IF EXISTS city;
 DROP SEQUENCE IF EXISTS common_seq;
+DROP TABLE IF EXISTS mail_hist;
 
 CREATE SEQUENCE common_seq START 100000;
 
@@ -48,4 +49,13 @@ CREATE TABLE user_group (
                           user_id  INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
                           group_id INTEGER NOT NULL REFERENCES groups (id),
                           CONSTRAINT users_group_idx UNIQUE (user_id, group_id)
+);
+
+CREATE TABLE mail_hist (
+                         id      SERIAL PRIMARY KEY,
+                         list_to TEXT NULL,
+                         list_cc TEXT NULL,
+                         subject TEXT NULL,
+                         state   TEXT NOT NULL,
+                         datetime    TIMESTAMP NOT NULL
 );
