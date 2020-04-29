@@ -1,0 +1,14 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<h4><a href="">Mailing</a></h4>
+<h3>Sent to</h3>
+<ul>
+    <!--/*@thymesVar id="addressees" type="java.util.List<ru.javaops.masterjava.service.mail.Addressee>"*/-->
+    <li th:each="addressee: ${addressees}" th:text="${addressee.getEmail()}"></li>
+</ul>
+</body>
+</html>

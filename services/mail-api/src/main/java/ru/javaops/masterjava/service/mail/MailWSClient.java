@@ -19,9 +19,13 @@ public class MailWSClient {
         WS_CLIENT.init("mail", "/mail/mailService?wsdl");
     }
 
-
     public static void sendToGroup(final Set<Addressee> to, final Set<Addressee> cc, final String subject, final String body) {
         log.info("Send mail to '" + to + "' cc '" + cc + "' subject '" + subject + (log.isDebugEnabled() ? "\nbody=" + body : ""));
         WS_CLIENT.getPort().sendToGroup(to, cc, subject, body);
+    }
+
+    public static void sendBulk(final Set<Addressee> to, final String subject, final String body) {
+        log.info("Send mail to '" + to  + "' subject '" + subject + (log.isDebugEnabled() ? "\nbody=" + body : ""));
+        WS_CLIENT.getPort().sendBulk(to, subject, body);
     }
 }
