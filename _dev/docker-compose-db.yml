@@ -18,6 +18,7 @@ services:
       retries: 5
     volumes:
       - ./initDB.sql:/docker-entrypoint-initdb.d/init.sql
+#      - ./initDB_full.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
     networks:
       - mj-network
