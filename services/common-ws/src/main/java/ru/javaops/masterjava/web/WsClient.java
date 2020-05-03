@@ -43,10 +43,11 @@ public class WsClient<T> {
         return port;
     }
 
-    public static <T> void setAuth(T port, String user, String password) {
+    public static <T> void setAuth(T port, String host) {
+        Config config = HOSTS.getConfig(host);
         Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
-        requestContext.put(BindingProvider.USERNAME_PROPERTY, user);
-        requestContext.put(BindingProvider.PASSWORD_PROPERTY, password);
+        requestContext.put(BindingProvider.USERNAME_PROPERTY, config.getString("user"));
+        requestContext.put(BindingProvider.PASSWORD_PROPERTY, config.getString("password"));
     }
 
     public static <T> void setHandler(T port, Handler handler) {
