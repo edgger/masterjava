@@ -1,12 +1,16 @@
 package ru.javaops.masterjava.service.mail.listeners;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import ru.javaops.masterjava.service.mail.jms.JmsMessagePayload;
+import ru.javaops.masterjava.service.mail.MailWSClient;
 
 import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.util.Collections;
 
 @WebListener
 @Slf4j
@@ -20,6 +24,8 @@ public class JmsMailListener implements ServletContextListener {
             InitialContext initCtx = new InitialContext();
             QueueConnectionFactory connectionFactory =
                     (QueueConnectionFactory) initCtx.lookup("java:comp/env/jms/ConnectionFactory");
+            ((ActiveMQConnectionFactory) connectionFactory).setTrustedPackages(
+                    Collections.singletonList("ru.javaops.masterjava.service.mail.jms"));
             connection = connectionFactory.createQueueConnection();
             QueueSession queueSession = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue queue = (Queue) initCtx.lookup("java:comp/env/jms/queue/MailQueue");
@@ -30,11 +36,11 @@ public class JmsMailListener implements ServletContextListener {
                 try {
                     while (!Thread.interrupted()) {
                         Message m = receiver.receive();
-                        // TODO implement mail sending
-                        if (m instanceof TextMessage) {
-                            TextMessage tm = (TextMessage) m;
-                            String text = tm.getText();
-                            log.info("Received TextMessage with text '{}'", text);
+                        if (m instanceof ObjectMessage) {
+                            ObjectMessage om = (ObjectMessage) m;
+                            JmsMessagePayload mail = (JmsMessagePayload) om.getObject();
+                            MailWSClient.sendBulk(MailWSClient.split(mail.getUsers()), mail.getSubject(), mail.getBody(), null);
+                            log.info("Received ObjectMessage '{}'", mail);
                         }
                     }
                 } catch (Exception e) {
