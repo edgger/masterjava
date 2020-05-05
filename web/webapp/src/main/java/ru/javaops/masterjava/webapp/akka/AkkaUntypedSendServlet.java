@@ -6,6 +6,7 @@ import akka.actor.Props;
 import lombok.extern.slf4j.Slf4j;
 import ru.javaops.masterjava.service.mail.GroupResult;
 import ru.javaops.masterjava.service.mail.util.MailUtils.MailObject;
+import ru.javaops.masterjava.webapp.WebUtil;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
@@ -20,10 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static ru.javaops.masterjava.webapp.WebUtil.createMailObject;
-import static ru.javaops.masterjava.webapp.WebUtil.doAsync;
-import static ru.javaops.masterjava.webapp.akka.AkkaWebappListener.akkaActivator;
-
 @WebServlet(value = "/sendAkkaUntyped", loadOnStartup = 1, asyncSupported = true)
 @Slf4j
 @MultipartConfig
@@ -34,7 +31,8 @@ public class AkkaUntypedSendServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        mailActor = akkaActivator.getActorRef("akka.tcp://MailService@127.0.0.1:2553/user/mail-actor");
+        mailActor = AkkaWebappListener.akkaActivator
+                .getActorRef("akka.tcp://MailService@127.0.0.1:2553/user/mail-actor");
         executorService = Executors.newFixedThreadPool(8);
     }
 
@@ -55,16 +53,29 @@ public class AkkaUntypedSendServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        doAsync(resp, () -> {
-            MailObject mailObject = createMailObject(req);
-            final AsyncContext ac = req.startAsync();
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try {
+            req.setCharacterEncoding("UTF-8");
+            resp.setCharacterEncoding("UTF-8");
+
+            log.info("Start asynchronous processing");
+
+            MailObject mailObject = WebUtil.createMailObject(req);
+
+            AsyncContext ac = req.startAsync();
+
             executorService.submit(() -> {
-                ActorRef webappActor = akkaActivator.startActor(Props.create(WebappActor.class, ac));
+                ActorRef webappActor = AkkaWebappListener.akkaActivator.startActor(Props.create(WebappActor.class, ac));
                 mailActor.tell(mailObject, webappActor);
             });
-        });
+
+            log.info("Asynchronous processing running ...");
+        } catch (Exception e) {
+            log.error("Asynchronous processing failed", e);
+            String message = e.getMessage();
+            String result = (message != null) ? message : e.getClass().getName();
+            resp.getWriter().write(result);
+        }
     }
 
     public static class WebappActor extends AbstractActor {
