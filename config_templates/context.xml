@@ -59,5 +59,6 @@
               type="org.apache.activemq.command.ActiveMQQueue"
               factory="org.apache.activemq.jndi.JNDIReferenceFactory"
               physicalName="MAIL.QUEUE"/>
+    <!--trustAllPackages="true"  -->
 
 </Context>
